@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Index{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  {% for user in users %}
+    <article>
+        <header>
+            <div>
+                <h1>{{ user['username'] }}</h1>
+                <p> ID: {{ user['id'] }}</p>
+                <p> Wallet: {{ user['wallet'] }}</p>
+                <p> Type: {{ user['user_type'].value }}</p>
+            </div>
+        </header>
+    </article>
+  {% endfor %}
+  
+  <form method="post">
+    <label for="username">Username</label>
+    <input name="username" id="username" required>
+    <label for="value">Value</label>
+    <input name="value" id="value" required>
+    <input type="submit" value="Pay">
+  </form>
+{% endblock %}

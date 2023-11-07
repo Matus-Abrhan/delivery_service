@@ -1,20 +1,21 @@
 import functools
 
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
-)
-# from werkzeug.security import check_password_hash, generate_password_hash
+from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
+from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.db import get_db
+from .db import db
+from .user import BaseUser, UserCustomer, UserDelivery, UserRestaurant, UserEnum
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+bp_root = Blueprint('index', __name__, url_prefix='/')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
         username = request.form['username']
-        password = request.form['password']
-        db = get_db()
+        password = generate_password_hash(request.form['password'])
+        user_type = request.form['user_type']
+
         error = None
 
         if not username:
@@ -23,15 +24,15 @@ def register():
             error = 'Password is required.'
 
         if error is None:
-            try:
-                db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",(username, password), #generate_password_hash(password)
-                )
-                db.commit()
-            except db.IntegrityError:
-                error = f"User {username} is already registered."
-            else:
-                return redirect(url_for("auth.login"))
+            if user_type == UserEnum.Customer.value:
+                user = UserCustomer(username=username, password=password, wallet=10)
+            elif user_type == UserEnum.Restaurant.value:
+                user = UserRestaurant(username=username, password=password, wallet=100)
+            elif user_type == UserEnum.Delivery.value:
+                user = UserDelivery(username=username, password=password, wallet=0)
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for("auth.login"))
 
         flash(error)
 
@@ -42,20 +43,18 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db()
+
         error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
+        user = BaseUser.query.filter_by(username=username).first()
 
         if user is None:
-            error = 'Incorrect username.'
-        elif not user['password'] == password: # check_password_hash(user['password'], password)
-            error = 'Incorrect password.'
+            error = 'Incorrect username or password.'
+        elif check_password_hash(password, user.password):
+            error = 'Incorrect username or password.'
 
         if error is None:
             session.clear()
-            session['user_id'] = user['id']
+            session['user_id'] = user.id
             return redirect(url_for('index'))
 
         flash(error)
@@ -69,9 +68,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
+        g.user = BaseUser.query.filter_by(id=user_id).first()
 
 @bp.route('/logout')
 def logout():
@@ -88,3 +85,18 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+@bp_root.route('/', methods=('GET', 'POST'))
+@login_required
+def index():
+    if request.method == 'POST':
+        username = request.form['username']
+        value = request.form['value']
+        # flash(f"User: {username} Value: {value}")
+
+        user2 = BaseUser.query.filter_by(username=username).first()
+        g.user.pay(user2, int(value))
+
+
+    users = BaseUser.query.all()
+    return render_template('auth/index.html', users=users)
