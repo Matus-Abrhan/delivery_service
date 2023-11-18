@@ -1,11 +1,8 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from sqlalchemy import Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
 import enum
 
 from .db import db
-#from .auth import login_required
-
 
 class UserEnum(enum.Enum):
     Delivery = "delivery"
@@ -19,7 +16,6 @@ class BaseUser(db.Model):
     password = db.Column(db.String(100), nullable=False)
     wallet = db.Column(db.Integer)
     user_type = db.Column(db.Enum(UserEnum))
-    # history = db.Column(db.)
 
     def __init__(self, **kwargs):
         for (k, v) in kwargs.items():
@@ -59,9 +55,11 @@ class UserCustomer(BaseUser):
 
 class UserRestaurant(BaseUser):
     id = db.Column(db.Integer, db.ForeignKey('base_user.id'), primary_key=True)
+    menu = db.relationship("Menu")
 
     def __init__(self, **kwargs):
         super().__init__(user_type=UserEnum.Restaurant, **kwargs)
+
 
 class UserDelivery(BaseUser):
     id = db.Column(db.Integer, db.ForeignKey('base_user.id'), primary_key=True)

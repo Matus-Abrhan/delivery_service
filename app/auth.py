@@ -4,7 +4,9 @@ from flask import Blueprint, flash, g, redirect, render_template, request, sessi
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from .db import db
-from .user import BaseUser, UserCustomer, UserDelivery, UserRestaurant, UserEnum
+from .user_model import BaseUser, UserCustomer, UserDelivery, UserRestaurant, UserEnum
+from .menu_model import Menu, FoodItem
+from .order_model import Order, OrderState
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 bp_root = Blueprint('index', __name__, url_prefix='/')
@@ -90,13 +92,27 @@ def login_required(view):
 @login_required
 def index():
     if request.method == 'POST':
-        username = request.form['username']
-        value = request.form['value']
-        # flash(f"User: {username} Value: {value}")
+        food_item_id = request.form['food_item_id']
 
-        user2 = BaseUser.query.filter_by(username=username).first()
-        g.user.pay(user2, int(value))
+        error = None
+        food_item = FoodItem.query.filter_by(id=food_item_id).first()
+        menu = Menu.query.filter_by(id=food_item.menu_id).first()
+        order = Order.query.filter_by(customer_id=g.user.id, order_state=OrderState.Composing).first()
+        if order is None:
+            order = Order(customer_id=g.user.id, restaurant_id=menu.restaurant_id, food_items='', sum_total=0, order_state=OrderState.Composing)
+        if order.restaurant_id != menu.restaurant_id:
+            error = 'Different Restaurant is already used'
 
+        order.food_items += food_item.name + "," 
+        order.sum_total += food_item.price
 
-    users = BaseUser.query.all()
-    return render_template('auth/index.html', users=users)
+        if error is None:
+            db.session.add(order)
+            db.session.commit()
+            return redirect(url_for('index'))
+        
+        flash(error)
+
+    # TODO: add practical way to add items to cart
+    menus = Menu.query.all()
+    return render_template('auth/index.html', menus=menus)

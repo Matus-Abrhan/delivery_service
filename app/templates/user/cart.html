@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %} Cart {% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    {% for order in orders %}
+        <h1>Order id: {{ order.id }}</h1>
+        <p>Sum: {{ order.sum_total }}</p>
+        <p>State: {{ order.order_state }}</p>
+    {% endfor %}
+  <form method="post">
+    
+    <input type="submit" value="pay">
+  </form>
+{% endblock %}

@@ -5,24 +5,26 @@
 {% endblock %}
 
 {% block content %}
-  {% for user in users %}
+  {% for menu in menus %}
     <article>
         <header>
             <div>
-                <h1>{{ user['username'] }}</h1>
-                <p> ID: {{ user['id'] }}</p>
-                <p> Wallet: {{ user['wallet'] }}</p>
-                <p> Type: {{ user['user_type'].value }}</p>
+                <h1>Menu id: {{ menu['id'] }}</h1>
+                {% for food_item in menu['food_items'] %}
+                  <div>
+                    <p>Food Item id:{{ food_item['id'] }}</p>
+                    <p>Name: {{ food_item['name'] }}</p>
+                    <p>Price: {{ food_item['price'] }}</p>
+                  </div>
+                {% endfor %}
             </div>
         </header>
     </article>
   {% endfor %}
   
   <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="value">Value</label>
-    <input name="value" id="value" required>
-    <input type="submit" value="Pay">
+    <label for="value">Food Item ID</label>
+    <input name="food_item_id" id="food_item_id" required>
+    <input type="submit" value="Add to cart">
   </form>
 {% endblock %}
