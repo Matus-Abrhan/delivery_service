@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+
+    <style>
+    hr {
+      display: block;
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+      margin-left: auto;
+      margin-right: auto;
+      border-style: inset;
+      border-width: 2px;
+    }
+
+    label {
+        margin-bottom: 0.1em;
+    }
+
+    button {
+        width: 10em;
+    }
+</style>
+</head>
+
+<body>
+    <h1>Restaurant Menu Form</h1>
+    <form action="/submit" method="post">
+        <div id="items-container">
+            <div class="item">
+                <label for="category">Category:</label><br>
+                <input type="text" id="category" name="category" required><br>
+
+                <label for="item_name">Item Name:</label><br>
+                <input type="text" id="item_name" name="item_name" required><br>
+
+                <label for="description">Description:</label><br>
+                <textarea id="description" name="description" rows="2" required></textarea><br>
+
+                <label for="price">Price:</label><br>
+                <input type="number" id="price" name="price" step="0.01" required><br>
+
+            <!--
+                <label for="validation_date_from">Date of Validation(start):</label><br>
+                <input type="date" id="validation_date_from" name="validation_date_from" required
+                       min="2023-01-01"><br>
+
+                <label for="validation_date_to">Date of Validation(end):</label><br>
+                <input type="date" id="validation_date_to" name="validation_date_to" required
+                       max="2023-12-31"><br>
+
+                -->
+
+                <hr>
+            </div>
+        </div>
+
+        <p>To add more items, please click on Add Item button.</p>
+        <button type="button" onclick="addNewItem()">Add Item</button>
+
+    </form>
+
+    <script>
+        var itemCount = 0;
+
+        function addNewItem() {
+            // Clone the item container and append it to the items container
+            var newItem = document.querySelector('.item').cloneNode(true);
+
+           // Update IDs for the cloned item
+            newItem.querySelectorAll('[id]').forEach(function (element) {
+                element.id = element.id + '-' + itemCount;
+            });
+
+            newItem.querySelectorAll('input[type="text"]').forEach(function (input) {
+                input.value = '';
+            });
+            newItem.querySelectorAll('textarea').forEach(function (textarea) {
+                textarea.value = '';
+            });
+            newItem.querySelectorAll('input[type="number"]').forEach(function (input) {
+                input.value = '';
+            });
+
+            document.getElementById('items-container').appendChild(newItem);
+        }
+
+        itemCount++;
+    </script>
+
+    <p>To submit your menu, please click on Register button.</p>
+
+</body>
+</html>

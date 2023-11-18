@@ -12,6 +12,8 @@ class Menu(db.Model):
 class FoodItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     menu_id = db.Column(db.Integer, db.ForeignKey('menu.id'))
+    category = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Integer, nullable=False)
 
