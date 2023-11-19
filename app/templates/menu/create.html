@@ -5,8 +5,66 @@
 {% endblock %}
 
 {% block content %}
-  <form method="post" action="{{ url_for('menu.create_menu') }}">
-     {% include '/menu/form.html' %}
-    <input type="submit" value="Register">
+  <form method="post">
+     <div id="items-container">
+            <div class="item">
+                <label for="category">Category:</label><br>
+                <input type="text" id="category" name="category[]" required><br>
+
+                <label for="item_name">Item Name:</label><br>
+                <input type="text" id="item_name" name="item_name[]" required><br>
+
+                <label for="description">Description:</label><br>
+                <textarea id="description" name="description[]" rows="2" required></textarea><br>
+
+                <label for="price">Price:</label><br>
+                <input type="number" id="price" name="price[]" step="0.01" required><br>
+
+            <!--
+                <label for="validation_date_from">Date of Validation(start):</label><br>
+                <input type="date" id="validation_date_from" name="validation_date_from" required
+                       min="2023-01-01"><br>
+
+                <label for="validation_date_to">Date of Validation(end):</label><br>
+                <input type="date" id="validation_date_to" name="validation_date_to" required
+                       max="2023-12-31"><br>
+                -->
+                <hr>
+            </div>
+        </div>
+
+      <p>To add more items, please click on Add Item button.</p>
+        <button style="width: 10em;" type="button" onclick="addNewItem()">Add Item</button>
+
+      <p>To submit your menu, please click on Register button.</p>
+        <input type="submit" value="Register">
+
   </form>
+    <script>
+        var itemCount = 0;
+
+        function addNewItem() {
+            // Clone the item container and append it to the items container
+            var newItem = document.querySelector('.item').cloneNode(true);
+
+           // Update IDs for the cloned item
+            newItem.querySelectorAll('[id]').forEach(function (element) {
+                element.id = element.id + '-' + itemCount;
+            });
+
+            newItem.querySelectorAll('input[type="text"]').forEach(function (input) {
+                input.value = '';
+            });
+            newItem.querySelectorAll('textarea').forEach(function (textarea) {
+                textarea.value = '';
+            });
+            newItem.querySelectorAll('input[type="number"]').forEach(function (input) {
+                input.value = '';
+            });
+
+            document.getElementById('items-container').appendChild(newItem);
+        }
+
+        itemCount++;
+    </script>
 {% endblock %}

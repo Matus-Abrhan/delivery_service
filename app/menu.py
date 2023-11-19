@@ -16,7 +16,6 @@ def create_menu():
         error = None
 
         if error is None:
-            # TODO: add ui for creating food menues
             item_names = request.form.getlist('item_name[]')
             descriptions = request.form.getlist('description[]')
             prices = request.form.getlist('price[]')
@@ -24,6 +23,7 @@ def create_menu():
 
             menu = Menu(restaurant_id=g.user.id)
             for i in range(len(item_names)):
+                print("name: " + item_names[i] + ", cat: " + categories[i] + ", desc: " + descriptions[i] + ", price: " + prices[i])
                 food_item = FoodItem(category=categories[i], name=item_names[i], description=descriptions[i], price=prices[i])
                 menu.food_items.append(food_item)
             db.session.add(menu)
