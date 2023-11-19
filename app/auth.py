@@ -17,6 +17,8 @@ def register():
         username = request.form['username']
         password = generate_password_hash(request.form['password'])
         user_type = request.form['user_type']
+        email = request.form['email']
+        phone_number = request.form['phone_number']
 
         error = None
 
@@ -27,11 +29,11 @@ def register():
 
         if error is None:
             if user_type == UserEnum.Customer.value:
-                user = UserCustomer(username=username, password=password, wallet=10)
+                user = UserCustomer(username=username, password=password, email=email, phone_number=phone_number, wallet=10)
             elif user_type == UserEnum.Restaurant.value:
-                user = UserRestaurant(username=username, password=password, wallet=100)
+                user = UserRestaurant(username=username, password=password, email=email, phone_number=phone_number, wallet=100)
             elif user_type == UserEnum.Delivery.value:
-                user = UserDelivery(username=username, password=password, wallet=0)
+                user = UserDelivery(username=username, password=password, email=email, phone_number=phone_number, wallet=0)
             db.session.add(user)
             db.session.commit()
             return redirect(url_for("auth.login"))

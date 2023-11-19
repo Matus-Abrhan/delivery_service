@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %} User Information {% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <p><strong>User name:</strong> {{ user['username'] }}</p>
+        <p><strong>Email:</strong> {{ user['email'] }}</p>
+        <p><strong>Phone number:</strong> {{ user['phone_number'] }}</p>
+        <p><strong>Wallet:</strong> {{ user['wallet'] }}</p>
+        <p><strong>Orders History:</strong> TODO</p>
+    </div>
+
+{% endblock %}

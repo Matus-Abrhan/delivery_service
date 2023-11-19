@@ -5,6 +5,7 @@ from .db import db
 from .auth import bp, index, bp_root
 from .menu import bp
 from .cart import bp
+from .user_info import bp
 import os
 
 def create_app(test_config=None):
@@ -27,6 +28,7 @@ def create_app(test_config=None):
     app.register_blueprint(auth.bp)
     app.register_blueprint(menu.bp)
     app.register_blueprint(cart.bp)
+    app.register_blueprint(user_info.bp)
 
     app.add_url_rule('/', view_func=index)
     db.init_app(app)
