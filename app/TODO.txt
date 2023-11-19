@@ -1,0 +1,7 @@
+1. tracking
+2.  customer - vidi menu s restauraciami, kategoriami
+    restaurant - vidi co si kto od nich objednal za jedlo
+    delivery - vidi zakazky, ktore si moze vybrat na rozvoz
+3. filter pre menu stranku(customer view)
+  *pridat filter ako query parameter napr. ...?categ=fast_food zobrazi kategoriu fast food
+  *podobne ostatne

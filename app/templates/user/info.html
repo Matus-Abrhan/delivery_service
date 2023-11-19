@@ -10,7 +10,21 @@
         <p><strong>Email:</strong> {{ user['email'] }}</p>
         <p><strong>Phone number:</strong> {{ user['phone_number'] }}</p>
         <p><strong>Wallet:</strong> {{ user['wallet'] }}</p>
-        <p><strong>Orders History:</strong> TODO</p>
+
+        <p><strong>Orders History:</strong></p>
+        {% if orders %}
+          <ul>
+            {% for order in orders %}
+              <li>
+                Order id: {{ order['id'] }}<br>
+                Total price: {{ order['sum_total'] }}<br>
+                Order state: {{ order['order_state'] }} <br>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>No orders found.</p>
+        {% endif %}
     </div>
 
 {% endblock %}
