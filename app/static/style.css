@@ -24,3 +24,41 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 .content textarea { min-height: 12em; resize: vertical; }
 input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
+
+input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 1px solid #555;
+    outline: none;
+  }
+  
+  input:focus {
+    background-color: lightblue;
+  }
+  
+  input[type=submit] {
+      width: 20%;
+      align-self: center;
+      min-width: 10em;
+      background-color: #377ba8;
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      margin: 4px 2px;
+      cursor: pointer;
+  }
+  input[type=submit]:hover{
+      background-color: #46a1d5;
+  }
+  
+  .form-radio{
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1.1;
+    display: grid;
+    grid-template-columns: 1em auto;
+    gap: 0.5em;
+  }
