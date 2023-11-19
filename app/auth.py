@@ -87,32 +87,3 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
-
-@bp_root.route('/', methods=('GET', 'POST'))
-@login_required
-def index():
-    if request.method == 'POST':
-        food_item_id = request.form['food_item_id']
-
-        error = None
-        food_item = FoodItem.query.filter_by(id=food_item_id).first()
-        menu = Menu.query.filter_by(id=food_item.menu_id).first()
-        order = Order.query.filter_by(customer_id=g.user.id, order_state=OrderState.Composing).first()
-        if order is None:
-            order = Order(customer_id=g.user.id, restaurant_id=menu.restaurant_id, food_items='', sum_total=0, order_state=OrderState.Composing)
-        if order.restaurant_id != menu.restaurant_id:
-            error = 'Different Restaurant is already used'
-
-        order.food_items += food_item.name + "," 
-        order.sum_total += food_item.price
-
-        if error is None:
-            db.session.add(order)
-            db.session.commit()
-            return redirect(url_for('index'))
-        
-        flash(error)
-
-    # TODO: add practical way to add items to cart
-    menus = Menu.query.all()
-    return render_template('auth/index.html', menus=menus)
