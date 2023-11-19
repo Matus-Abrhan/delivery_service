@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Index{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  {% for order in orders %}
+    <article>
+        <header>
+            <div>
+                <h1>Order id: {{ order['id'] }}</h1>
+                <p>Customer id: {{ order['customer_id']}}</p>
+                <p>State: {{ order['order_state']}}</p>
+                <p>Food items: {{ order['food_items'] }}</p> 
+            </div>
+        </header>
+    </article>
+  {% endfor %}
+  
+  <form method="post">
+    <label for="value">Order id</label>
+    <input name="order_id" id="order_id" required>
+    <input type="submit" value="Deliver order">
+  </form>
+{% endblock %}
