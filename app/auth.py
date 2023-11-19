@@ -9,7 +9,6 @@ from .menu_model import Menu, FoodItem
 from .order_model import Order, OrderState
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
-bp_root = Blueprint('index', __name__, url_prefix='/')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -27,7 +26,7 @@ def register():
 
         if error is None:
             if user_type == UserEnum.Customer.value:
-                user = UserCustomer(username=username, password=password, wallet=10)
+                user = UserCustomer(username=username, password=password, wallet=100)
             elif user_type == UserEnum.Restaurant.value:
                 user = UserRestaurant(username=username, password=password, wallet=100)
             elif user_type == UserEnum.Delivery.value:

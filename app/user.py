@@ -2,8 +2,11 @@ from flask import Blueprint, flash, g, redirect, render_template, request, sessi
 from .db import db
 from .auth import login_required
 from .menu_model import Menu, FoodItem
-from .order_model import Order, OrderState
+from .order_model import Order, OrderState, DeliveryState
 from .user_model import UserEnum
+
+
+bp_root = Blueprint('index', __name__, url_prefix='/')
 
 @bp_root.route('/', methods=('GET', 'POST'))
 @login_required
@@ -15,9 +18,10 @@ def index():
             error = None
             food_item = FoodItem.query.filter_by(id=food_item_id).first()
             menu = Menu.query.filter_by(id=food_item.menu_id).first()
-            order = Order.query.filter_by(customer_id=g.user.id, order_state=OrderState.Composing).first()
+            order = Order.query.filter_by(customer_id=g.user.id, order_state=OrderState.Creating).first()
             if order is None:
-                order = Order(customer_id=g.user.id, restaurant_id=menu.restaurant_id, food_items='', sum_total=0, order_state=OrderState.Composing)
+                order = Order(customer_id=g.user.id, restaurant_id=menu.restaurant_id, 
+                food_items='', sum_total=0, order_state=OrderState.Creating, delivery_state=DeliveryState.Open)
             if order.restaurant_id != menu.restaurant_id:
                 error = 'Different Restaurant is already used'
 
@@ -30,25 +34,71 @@ def index():
                 return redirect(url_for('index'))
             
             flash(error)
+
         elif g.user.user_type is UserEnum.Restaurant:
+            order_id_take = request.form.get('order_id_take', None)
+            order_id_ready = request.form.get('order_id_ready', None)
+
+            error = None
+            if order_id_take is not None:
+                order = Order.query.filter_by(id=order_id_take).first()
+                if order.restaurant_id != g.user.id:
+                    error = 'Order doesnt belong to this restaurant'
+                if order.order_state != OrderState.Finalyzed:
+                    error = 'Wrong order state, cannot take order'
+                
+                if error is None:
+                    order.order_state = OrderState.Preparing
+                    db.session.add(order)
+                    db.session.commit()
+                    return redirect(url_for('index'))
+                
+                flash(error)
+            
+            elif order_id_ready is not None:
+                order = Order.query.filter_by(id=order_id_ready).first()
+                if order.restaurant_id != g.user.id:
+                    error = 'Order doesnt belong to this restaurant'
+                if order.order_state != OrderState.Preparing or order.delivery_state != DeliveryState.Closed:
+                    error = 'Wrong order state, cannot mark as ready'
+                
+                if error is None:
+                    order.order_state = OrderState.Ready
+                    db.session.add(order)
+                    db.session.commit()
+                    return redirect(url_for('index'))
+
+                flash(error)
+        
+        elif g.user.user_type is UserEnum.Delivery:
             order_id = request.form['order_id']
 
             error = None
-            order = Order.query.filter_by(id=order_id),first()
-            if order.restaurant_id != g.user.user_id:
-                error = 'Order doesnt belong to this restaurant'
+            order = Order.query.filter_by(id=order_id).first()
             if order.order_state != OrderState.Preparing:
                 error = 'Wrong order state, cannot finalyze order'
-            
+            if order.delivery_state != DeliveryState.Open:
+                error = "Order not open for delivery"
+
             if error is None:
-                order.order_state = OrderState.Delivering
-                # TODO
+                order.delivery_id = g.user.id
+                order.delivery_state = DeliveryState.Closed
+                db.session.add(order)
+                db.session.commit()
+                return redirect(url_for('index'))
+            
+            flash(error)
 
 
     # TODO: add practical way to add items to cart
-    if g.user.user_type is UserEnum.Restaurant():
+    if g.user.user_type is UserEnum.Restaurant:
         orders = Order.query.filter_by(restaurant_id=g.user.id).all()
-        return render_template('auth/index_restaurent.html', orders=orders)
-    else:
+        return render_template('auth/index_restaurant.html', orders=orders)
+
+    elif g.user.user_type is UserEnum.Customer:
         menus = Menu.query.all()
         return render_template('auth/index.html', menus=menus)
+
+    elif g.user.user_type is UserEnum.Delivery:
+        orders = Order.query.filter_by(order_state=OrderState.Preparing, delivery_state=DeliveryState.Open).all()
+        return render_template('auth/index_delivery.html', orders=orders)

@@ -7,6 +7,7 @@
 {% block content %}
     {% for order in orders %}
         <h1>Order id: {{ order.id }}</h1>
+        <p>Items: {{ order.food_items }}</p>
         <p>Sum: {{ order.sum_total }}</p>
         <p>State: {{ order.order_state }}</p>
     {% endfor %}

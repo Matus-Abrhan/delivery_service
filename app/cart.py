@@ -13,7 +13,7 @@ def cart():
     if request.method == 'POST':
         error = None
 
-        order = Order.query.filter_by(customer_id=g.user.id, order_state=OrderState.Composing).first()
+        order = Order.query.filter_by(customer_id=g.user.id, order_state=OrderState.Creating).first()
         if not order:
             error = "No order to be payed"
 
@@ -22,7 +22,7 @@ def cart():
             value = g.user.pay(restaurant, order.sum_total)
             if value == order.sum_total:
                 # TODO: notify restaurant of the order
-                order.order_state = OrderState.Preparing
+                order.order_state = OrderState.Finalyzed
                 db.session.add(order)
                 db.session.commit()
 

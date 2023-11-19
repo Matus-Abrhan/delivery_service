@@ -2,9 +2,10 @@ from flask import Flask
 
 
 from .db import db
-from .auth import bp, index, bp_root
+from .auth import bp
 from .menu import bp
 from .cart import bp
+from .user import index, bp_root
 import os
 
 def create_app(test_config=None):
@@ -23,7 +24,7 @@ def create_app(test_config=None):
         pass
 
 
-    app.register_blueprint(auth.bp_root)
+    app.register_blueprint(user.bp_root)
     app.register_blueprint(auth.bp)
     app.register_blueprint(menu.bp)
     app.register_blueprint(cart.bp)
