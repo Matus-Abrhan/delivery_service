@@ -21,6 +21,5 @@ class Order(db.Model):
     delivery_id = db.Column(db.Integer, db.ForeignKey('user_delivery.id'))
     food_items = db.Column(db.String(1000))
     order_state = db.Column(db.Enum(OrderState))
-    # TODO: add delivery status (open|closed)
     delivery_state = db.Column(db.Enum(DeliveryState))
     sum_total = db.Column(db.Integer)

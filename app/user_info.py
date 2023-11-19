@@ -10,7 +10,5 @@ bp = Blueprint('info', __name__, url_prefix='/user')
 @bp.route('/info', methods=["GET"])
 @login_required
 def user_info():
-    base_user = BaseUser.query.first()
-    user_id = base_user.id
-    orders = Order.query.filter(Order.customer_id == user_id).all()
-    return render_template('user/info.html', user=base_user, orders=orders)
+    orders = Order.query.filter_by(customer_id=g.user.id).all()
+    return render_template('user/info.html', user=g.user, orders=orders)
