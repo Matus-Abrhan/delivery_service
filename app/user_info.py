@@ -12,3 +12,9 @@ bp = Blueprint('info', __name__, url_prefix='/user')
 def user_info():
     orders = Order.query.filter_by(customer_id=g.user.id).all()
     return render_template('user/info.html', user=g.user, orders=orders)
+
+@bp.route('/delete')
+def user_delete():
+    db.session.delete(g.user)
+    db.session.commit()
+    return redirect(url_for('auth.logout'))

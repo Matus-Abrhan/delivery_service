@@ -42,11 +42,15 @@ def register():
         phone_number = request.form['phone_number']
 
         error = None
+        all_users = BaseUser.query.all()
 
         if not username:
             error = 'Username is required.'
         elif not password:
             error = 'Password is required.'
+        elif any([username == user.username  for user in all_users]):
+            error = 'Username is already used.'
+
 
         if error is None:
             try:
