@@ -5,6 +5,33 @@
 {% endblock %}
 
 {% block content %}
+
+  <!-- Filtrovanie na zaklade category alebo restaurant name -->
+  <form method="get">
+    <div>
+        <label for="category">Filter by food category:</label>
+        <select name="category" id="category" required>
+          <option value="">Select a category</option>
+          <!-- Dynamically populate categories -->
+          {% for category in categories %}
+          <option value="{{ category }}">{{ category }}</option>
+          {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="restaurant">Filter by restaurant name:</label>
+        <select name="restaurant" id="restaurant" required>
+          <option value="">Select a restaurant</option>
+          <!-- Dynamically populate restaurants -->
+          {% for restaurant in restaurants %}
+          <option value="{{ restaurant }}">{{ restaurant }}</option>
+          {% endfor %}
+        </select>
+    </div>
+    <input type="submit" value="Filter">
+  </form>
+
+
   {% for menu in menus %}
     <article>
         <header>
@@ -23,8 +50,15 @@
   {% endfor %}
   
   <form method="post">
-    <label for="value">Food Item ID</label>
-    <input name="food_item_id" id="food_item_id" style="width: 10em;" required>
+    <div>
+        <label for="value">Food Item ID</label>
+        <input name="food_item_id" id="food_item_id" style="width: 10em;" required>
+    </div>
+    <div>
+        <label for="quantity">Number of Items:</label>
+        <input type="number" name="quantity" id="quantity" min="1" value="1" style="width: 5em;" required>
+    </div>
     <input type="submit" value="Add to cart">
   </form>
+
 {% endblock %}

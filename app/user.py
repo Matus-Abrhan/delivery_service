@@ -14,6 +14,7 @@ def index():
     if request.method == 'POST': 
         if g.user.user_type is UserEnum.Customer:
             food_item_id = request.form.get('food_item_id', None)
+            quantity = request.form.get('quantity', None)
 
             error = None
 
@@ -26,8 +27,9 @@ def index():
             if order.restaurant_id != menu.restaurant_id:
                 error = 'Different Restaurant is already used'
 
-            order.food_items += food_item.name + "," 
-            order.sum_total += food_item.price
+            for i in range(int(quantity)):
+                order.food_items += food_item.name + ","
+                order.sum_total += food_item.price
 
             if error is None:
                 db.session.add(order)

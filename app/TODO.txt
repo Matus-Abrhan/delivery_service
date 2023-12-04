@@ -5,3 +5,4 @@
 3. filter pre menu stranku(customer view)
   *pridat filter ako query parameter napr. ...?categ=fast_food zobrazi kategoriu fast food
   *podobne ostatne
+4. pridat mnozstvo poloziek do kosika, nie po 1 veci  .. DONE
