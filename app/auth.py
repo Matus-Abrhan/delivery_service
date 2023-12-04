@@ -10,6 +10,28 @@ from .order_model import Order, OrderState
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+
+class UserFactory:
+    @staticmethod
+    def create_user(user_type, **kwargs):
+        user_class = {
+            UserEnum.Customer.value: UserCustomer,
+            UserEnum.Restaurant.value: UserRestaurant,
+            UserEnum.Delivery.value: UserDelivery
+        }.get(user_type)
+
+        if not user_class:
+            raise ValueError("Invalid user type")
+
+        if user_type == UserEnum.Customer.value:
+            kwargs['wallet'] = kwargs.get('wallet', 100)
+        elif user_type == UserEnum.Restaurant.value:
+            kwargs['wallet'] = kwargs.get('wallet', 100)
+        elif user_type == UserEnum.Delivery.value:
+            kwargs['wallet'] = kwargs.get('wallet', 0)
+
+        return user_class(**kwargs)
+
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
@@ -27,15 +49,19 @@ def register():
             error = 'Password is required.'
 
         if error is None:
-            if user_type == UserEnum.Customer.value:
-                user = UserCustomer(username=username, password=password, email=email, phone_number=phone_number, wallet=100)
-            elif user_type == UserEnum.Restaurant.value:
-                user = UserRestaurant(username=username, password=password, email=email, phone_number=phone_number, wallet=100)
-            elif user_type == UserEnum.Delivery.value:
-                user = UserDelivery(username=username, password=password, email=email, phone_number=phone_number, wallet=0)
-            db.session.add(user)
-            db.session.commit()
-            return redirect(url_for("auth.login"))
+            try:
+                user = UserFactory.create_user(
+                    user_type=user_type,
+                    username=username,
+                    password=password,
+                    email=email,
+                    phone_number=phone_number
+                )
+                db.session.add(user)
+                db.session.commit()
+                return redirect(url_for("auth.login"))
+            except ValueError as e:
+                error = str(e)
 
         flash(error)
 
