@@ -13,6 +13,13 @@ def user_info():
     orders = Order.query.filter_by(customer_id=g.user.id).all()
     return render_template('user/info.html', user=g.user, orders=orders)
 
+
+@bp.route('/map')
+def get_map():
+    mapbox_access_token = "Map token"
+    return render_template('user/map.html', mapbox_access_token=mapbox_access_token)
+
+
 @bp.route('/delete')
 def user_delete():
     db.session.delete(g.user)
