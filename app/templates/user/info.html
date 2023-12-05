@@ -13,13 +13,17 @@
 
         <p><strong>Orders History:</strong></p>
         {% if orders %}
-          <ul>
+          <ul id="list">
             {% for order in orders %}
               <li>
                 Order id: {{ order['id'] }}<br>
                 Total price: {{ order['sum_total'] }}<br>
-                Order state: {{ order['order_state'] }} <br>
+                Order state: {{ order['order_state'] }}
               </li>
+                <li style="display: none">{{ order['order_state'] }}</li>
+                <li style="display: none">{{ order['latitude'] }}</li>
+                <li style="display: none">{{ order['longitude'] }}</li>
+                <li style="display: none">{{ order['id'] }}</li>
             {% endfor %}
           </ul>
         {% else %}
@@ -60,13 +64,9 @@
 
 	<div class="container">
 
-		<input class="inputBox" type="number" id="Longitude" placeholder="Enter Longitude" />
-		<input class="inputBox" type="number" id="Latitude" placeholder="Enter Latitude" />
-		<button class="button" onclick="getLonLat()"> Submit</button>
 		<div id='map' style='width: 95%; height:500px;'></div><br/><br/>
 
 	</div>
-<button onclick="getLocation()">Try It</button>
 
 <p id="demo"></p>
 
@@ -75,13 +75,17 @@
     <script>
 
 
+       var list = document.getElementById("list").children
+       longslats = []
+        for (let i=0; i<list.length; i+=5){
+            if(list[i+1].innerHTML === "OrderState.Delivering"){
+                longslats.push([list[i+2].innerHTML,list[i+3].innerHTML,list[i+4].innerHTML])
+            }
+        }
+         console.log(longslats)
 		var longitude, latitude;
-		function getLonLat(){
-			longitude = document.getElementById("Longitude").value;
-			latitude = document.getElementById("Latitude").value;
-			display_map(longitude, latitude);
-		}
-		function display_map(longitude=17.107748, latitude=48.148598) {
+
+		function display_map() {
 			mapboxgl.accessToken = "{{ mapbox_access_token }}"
 			var map = new mapboxgl.Map({
 			container: 'map',
@@ -95,9 +99,22 @@
 			// fulscreen button
 			map.addControl(new mapboxgl.FullscreenControl());
 			// display a blue marker
-			var marker = new mapboxgl.Marker()
-	  			.setLngLat([longitude,latitude])
-	  			.addTo(map);
+
+            new mapboxgl.Marker()
+                    .setLngLat([longitude,latitude])
+                    .addTo(map);
+
+            for(let i = 0; i< longslats.length;i++){
+                new mapboxgl.Marker()
+                    .setLngLat([Number(longslats[i][1]),Number(longslats[i][0])])
+                    .setPopup(
+                        new mapboxgl.Popup({ offset: 25 }) // add popups
+                          .setHTML(
+                            `<h3>id = ${longslats[i][2] }</h3></p>`
+                          )
+                      )
+                    .addTo(map);
+            }
 	  		// Navigation marker at top-left corner
 	  		var nav = new mapboxgl.NavigationControl();
 	  			map.addControl(nav, 'top-left');
@@ -146,10 +163,7 @@
 			    }, labelLayerId);
 			});
 		}
-		display_map();
-
-        const x = document.getElementById("demo");
-
+    getLocation()
         function getLocation() {
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition);
@@ -159,9 +173,13 @@
         }
 
         function showPosition(position) {
-          x.innerHTML = "Latitude: " + position.coords.latitude +
-          "<br>Longitude: " + position.coords.longitude;
+          latitude = position.coords.latitude;
+          longitude = position.coords.longitude;
+          display_map();
         }
+
+
+
 	</script>
 
 {% endblock %}
