@@ -23,3 +23,6 @@ class Order(db.Model):
     order_state = db.Column(db.Enum(OrderState))
     delivery_state = db.Column(db.Enum(DeliveryState))
     sum_total = db.Column(db.Integer)
+    longitude = db.Column(db.String(30))
+    latitude = db.Column(db.String(30))
+

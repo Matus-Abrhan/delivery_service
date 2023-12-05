@@ -102,7 +102,11 @@ def index():
                     error = 'Wrong order state, cannot pickup order'
 
                 if error is None:
+                    lat = request.form.get("latitude", None)
+                    long = request.form.get("longitude", None)
                     order.order_state = OrderState.Delivering
+                    order.longitude = long
+                    order.latitude = lat
                     db.session.add(order)
                     db.session.commit()
                     return redirect(url_for('index'))

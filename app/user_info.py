@@ -7,17 +7,16 @@ from .order_model import Order
 
 bp = Blueprint('info', __name__, url_prefix='/user')
 
+
 @bp.route('/info', methods=["GET"])
 @login_required
 def user_info():
+    mapbox_access_token = ""
     orders = Order.query.filter_by(customer_id=g.user.id).all()
-    return render_template('user/info.html', user=g.user, orders=orders)
+    return render_template('user/info.html', user=g.user, orders=orders, mapbox_access_token=mapbox_access_token)
 
 
-@bp.route('/map')
-def get_map():
-    mapbox_access_token = "Map token"
-    return render_template('user/map.html', mapbox_access_token=mapbox_access_token)
+
 
 
 @bp.route('/delete')

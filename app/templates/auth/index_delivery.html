@@ -40,6 +40,8 @@
   <form method="post">
     <label for="value">Order id</label>
     <input name="order_id_pickup" id="order_id_pickup">
+      <input name="longitude" id="longitude">
+      <input name="latitude" id="latitude">
     <input type="submit" value="Pickup order">
   </form>
 
@@ -48,4 +50,29 @@
     <input name="order_id_delivered" id="order_id_delivered">
     <input type="submit" value="Delivered order">
   </form>
+
+    <script>
+    const lat = document.getElementById("latitude");
+    const long = document.getElementById("longitude");
+    lat.hidden=true;
+    long.hidden=true;
+
+
+    getLocation()
+    function getLocation() {
+          if (navigator.geolocation) {
+
+              navigator.geolocation.getCurrentPosition(showPosition);
+          } else {
+              lat.value = "48.148598"
+              long.value = "17.107748"
+          }
+        }
+
+        function showPosition(position) {
+            lat.value = position.coords.latitude
+            long.value = position.coords.longitude
+            console.log(lat.value)
+        }
+	</script>
 {% endblock %}
