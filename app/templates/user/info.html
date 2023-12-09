@@ -113,8 +113,14 @@
 			// display a blue marker
 
 
-            new mapboxgl.Marker()
+            new mapboxgl.Marker({ "color": "#b40219" })
                     .setLngLat([longitude,latitude])
+                    .setPopup(
+                        new mapboxgl.Popup({ offset: 25 }) // add popups
+                          .setHTML(
+                            `<h3>Tvoja poloha</h3>`
+                          )
+                      )
                     .addTo(map)
             let marker;
             for(let i = 0; i< longslats.length;i++){
@@ -123,7 +129,7 @@
                     .setPopup(
                         new mapboxgl.Popup({ offset: 25 }) // add popups
                           .setHTML(
-                            `<h3>id = ${longslats[i][2] }</h3></p>`
+                            `<h3>ID objednávky: ${longslats[i][2]}</h3>`
                           )
                       )
                     .addTo(map);
@@ -210,9 +216,7 @@
                             .setLngLat([Number(result[i][2]),Number(result[i][1])])
                             .setPopup(
                                 new mapboxgl.Popup({ offset: 25 }) // add popups
-                                  .setHTML(
-                                    `<h3>id = ${result[i][0] }</h3></p>`
-                                  )
+                                  .setHTML(`<h3>ID objednávky: ${result[i][0] }</h3>`)
                               )
                             .addTo(map);
                         markers.push(marker)
