@@ -140,3 +140,18 @@ def index():
         available_orders = Order.query.filter_by(order_state=OrderState.Preparing, delivery_state=DeliveryState.Open).all()
         taken_orders = Order.query.filter_by(delivery_id=g.user.id, delivery_state=DeliveryState.Closed)
         return render_template('auth/index_delivery.html', available_orders=available_orders, taken_orders=taken_orders)
+
+
+@bp_root.route('newLocation', methods=['POST'])
+@login_required
+def update_location():
+    data = request.get_json()
+    latitude = data['latitude']
+    longitude = data['longitude']
+    orders = Order.query.filter_by(delivery_id=g.user.id, order_state=OrderState.Delivering).all()
+    for order in orders:
+        order.longitude = longitude
+        order.latitude = latitude
+        db.session.add(order)
+        db.session.commit()
+    return redirect(url_for('index'))

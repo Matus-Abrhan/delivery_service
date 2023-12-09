@@ -7,6 +7,7 @@
 {% block content %}
   <h2>Taken Orders</h2>
   {% for order in taken_orders %}
+      <button id="updateLocation" onclick="updateLocation()">Update location</button>
     <article>
         <header>
             <div>
@@ -50,18 +51,41 @@
     <input name="order_id_delivered" id="order_id_delivered">
     <input type="submit" value="Delivered order">
   </form>
-
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
+
     const lat = document.getElementById("latitude");
     const long = document.getElementById("longitude");
     lat.hidden=true;
     long.hidden=true;
 
 
+    function updateLocation(){
+        if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(sendNewLocation);
+          } else {
+              lat.value = "48.148598"
+              long.value = "17.107748"
+          }
+    }
+    let add = 0.01
+    function sendNewLocation(position){
+            $.ajax({
+                url: '/newLocation',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ 'latitude': position.coords.latitude+add, 'longitude': position.coords.longitude }),
+                success: function(response) {
+                    add += 0.01  // to simulate movement
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+    }
     getLocation()
     function getLocation() {
           if (navigator.geolocation) {
-
               navigator.geolocation.getCurrentPosition(showPosition);
           } else {
               lat.value = "48.148598"
@@ -72,7 +96,6 @@
         function showPosition(position) {
             lat.value = position.coords.latitude
             long.value = position.coords.longitude
-            console.log(lat.value)
         }
 	</script>
 {% endblock %}

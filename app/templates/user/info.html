@@ -13,25 +13,30 @@
 
         <p><strong>Orders History:</strong></p>
         {% if orders %}
-          <ul id="list">
+          <ul>
             {% for order in orders %}
               <li>
                 Order id: {{ order['id'] }}<br>
                 Total price: {{ order['sum_total'] }}<br>
-                Order state: {{ order['order_state'] }}
+                Order state: {{ order['order_state'].value }}
               </li>
-                <li style="display: none">{{ order['order_state'] }}</li>
-                <li style="display: none">{{ order['latitude'] }}</li>
-                <li style="display: none">{{ order['longitude'] }}</li>
-                <li style="display: none">{{ order['id'] }}</li>
+            {% endfor %}
+          </ul>
+            <ul id="list" style="display: none">
+            {% for order in orders %}
+                <li>{{ order['order_state'].value }}</li>
+                <li>{{ order['latitude'] }}</li>
+                <li>{{ order['longitude'] }}</li>
+                <li>{{ order['id'] }}</li>
             {% endfor %}
           </ul>
         {% else %}
           <p>No orders found.</p>
         {% endif %}
     </div>
-
+{% if user.user_type.value == "customer" %}
     <div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src='https://api.mapbox.com/mapbox-gl-js/v0.46.0/mapbox-gl.js'></script>
 	<link href='https://api.mapbox.com/mapbox-gl-js/v0.46.0/mapbox-gl.css' rel='stylesheet' />
 	<style>
@@ -61,7 +66,7 @@
 		}
 	</style>
 
-
+    <button onclick="getDeliveries()"> Update delivery locations</button>
 	<div class="container">
 
 		<div id='map' style='width: 95%; height:500px;'></div><br/><br/>
@@ -73,21 +78,28 @@
 
     </div>
     <script>
+       let list = []
 
-
-       var list = document.getElementById("list").children
-       longslats = []
-        for (let i=0; i<list.length; i+=5){
-            if(list[i+1].innerHTML === "OrderState.Delivering"){
-                longslats.push([list[i+2].innerHTML,list[i+3].innerHTML,list[i+4].innerHTML])
+       function updateDeliveriesHTML(){
+            if(document.getElementById("list")){
+           list = document.getElementById("list").children
+       }
+           longslats = []
+            for (let i=0; i<list.length; i+=4){
+                if(list[i].innerHTML === "delivering"){
+                    longslats.push([list[i+1].innerHTML,list[i+2].innerHTML,list[i+3].innerHTML])
+                }
             }
-        }
-         console.log(longslats)
-		var longitude, latitude;
 
+       }
+        updateDeliveriesHTML()
+
+
+        let map;
+        let markers = []
 		function display_map() {
-			mapboxgl.accessToken = "{{ mapbox_access_token }}"
-			var map = new mapboxgl.Map({
+			map = mapboxgl.accessToken = "{{ mapbox_access_token }}"
+			map = new mapboxgl.Map({
 			container: 'map',
 			style: 'mapbox://styles/mapbox/satellite-streets-v10',
 			center: [longitude,latitude],
@@ -100,12 +112,13 @@
 			map.addControl(new mapboxgl.FullscreenControl());
 			// display a blue marker
 
+
             new mapboxgl.Marker()
                     .setLngLat([longitude,latitude])
-                    .addTo(map);
-
+                    .addTo(map)
+            let marker;
             for(let i = 0; i< longslats.length;i++){
-                new mapboxgl.Marker()
+                marker = new mapboxgl.Marker()
                     .setLngLat([Number(longslats[i][1]),Number(longslats[i][0])])
                     .setPopup(
                         new mapboxgl.Popup({ offset: 25 }) // add popups
@@ -114,7 +127,9 @@
                           )
                       )
                     .addTo(map);
+                markers.push(marker)
             }
+            console.log(markers)
 	  		// Navigation marker at top-left corner
 	  		var nav = new mapboxgl.NavigationControl();
 	  			map.addControl(nav, 'top-left');
@@ -163,7 +178,11 @@
 			    }, labelLayerId);
 			});
 		}
-    getLocation()
+
+        function resetMarkers(){
+            markers.forEach((marker) => marker.remove())
+        }
+        getLocation()
         function getLocation() {
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition);
@@ -178,8 +197,35 @@
           display_map();
         }
 
+         function getDeliveries(){
+            $.ajax({
+                url: '/user/deliveries',
+                type: 'GET',
+                contentType: 'application/json',
+                success: function(response) {
+                    let result = response['result']
+                    resetMarkers()
+                    for(let i = 0; i < result.length; i++){
+                        marker = new mapboxgl.Marker()
+                            .setLngLat([Number(result[i][2]),Number(result[i][1])])
+                            .setPopup(
+                                new mapboxgl.Popup({ offset: 25 }) // add popups
+                                  .setHTML(
+                                    `<h3>id = ${result[i][0] }</h3></p>`
+                                  )
+                              )
+                            .addTo(map);
+                        markers.push(marker)
+
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
 
 
 	</script>
-
+{% endif %}
 {% endblock %}
