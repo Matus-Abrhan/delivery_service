@@ -65,8 +65,6 @@
 		    cursor: pointer;
 		}
 	</style>
-
-    <button onclick="getDeliveries()"> Update delivery locations</button>
 	<div class="container">
 
 		<div id='map' style='width: 95%; height:500px;'></div><br/><br/>
@@ -228,7 +226,7 @@
                 }
             });
         }
-
+        const interval = setInterval(getDeliveries, 5000)
 
 	</script>
 {% endif %}

@@ -76,13 +76,15 @@
                 contentType: 'application/json',
                 data: JSON.stringify({ 'latitude': position.coords.latitude+add, 'longitude': position.coords.longitude }),
                 success: function(response) {
-                    add += 0.01  // to simulate movement
+                    add += 0.1  // to simulate movement
+                    console.log("TU SI")
                 },
                 error: function(error) {
                     console.log(error);
                 }
             });
     }
+    const interval = setInterval(updateLocation, 5000)
     getLocation()
     function getLocation() {
           if (navigator.geolocation) {
