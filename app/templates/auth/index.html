@@ -7,10 +7,10 @@
 {% block content %}
 
   <!-- Filtrovanie na zaklade category alebo restaurant name -->
-  <form method="get">
+  <form method="GET" action="{{ url_for('index') }}">
     <div>
         <label for="category">Filter by food category:</label>
-        <select name="category" id="category" required>
+        <select name="category" id="category">
           <option value="">Select a category</option>
           <!-- Dynamically populate categories -->
           {% for category in categories %}
@@ -20,7 +20,7 @@
     </div>
     <div>
         <label for="restaurant">Filter by restaurant name:</label>
-        <select name="restaurant" id="restaurant" required>
+        <select name="restaurant" id="restaurant">
           <option value="">Select a restaurant</option>
           <!-- Dynamically populate restaurants -->
           {% for restaurant in restaurants %}

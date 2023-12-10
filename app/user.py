@@ -3,7 +3,7 @@ from .db import db
 from .auth import login_required
 from .menu_model import Menu, FoodItem
 from .order_model import Order, OrderState, DeliveryState
-from .user_model import UserEnum
+from .user_model import UserEnum, BaseUser
 
 
 bp_root = Blueprint('index', __name__, url_prefix='/')
@@ -133,9 +133,31 @@ def index():
         return render_template('auth/index_restaurant.html', orders=orders)
 
     elif g.user.user_type is UserEnum.Customer:
-        food_items = FoodItem.query.all()
-        print(food_items)
-        return render_template('auth/index.html', fooditems=food_items)
+        restaurants = {restaurant.username for restaurant in BaseUser.query.filter_by(user_type=UserEnum.Restaurant)}
+        categories = {food_item.category for food_item in FoodItem.query.all()}
+
+        category = request.args.get('category', None)
+        restaurant = request.args.get('restaurant', None)
+        
+
+        print(FoodItem.query.all())
+        if category and restaurant:
+            restaurant = BaseUser.query.filter_by(username=restaurant).first()
+            menus = Menu.query.filter_by(restaurant_id=restaurant.id).all()
+            food_items = []
+            for menu in menus:
+                food_items += FoodItem.query.filter_by(id=menu.id, category=category).all()
+        elif category:
+            food_items = FoodItem.query.filter_by(category=category).all()
+        elif restaurant:
+            restaurant = BaseUser.query.filter_by(username=restaurant).first()
+            menus = Menu.query.filter_by(restaurant_id=restaurant.id).all()
+            food_items = []
+            for menu in menus:
+                food_items += FoodItem.query.filter_by(id=menu.id, category=category).all()
+        else:
+            food_items = FoodItem.query.all()
+        return render_template('auth/index.html',categories=categories, restaurants=restaurants, menus=food_items)
 
     elif g.user.user_type is UserEnum.Delivery:
         available_orders = Order.query.filter_by(order_state=OrderState.Preparing, delivery_state=DeliveryState.Open).all()
