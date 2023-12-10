@@ -31,17 +31,15 @@
     <input type="submit" value="Filter">
   </form>
 
-
-  {% for menu in menus %}
+  <div class="menu-container">
+  {% for food_item in fooditems %}
     <article>
         <header>
-            <div>
-                <h1>Menu id: {{ menu['id'] }}</h1>
-                {% for food_item in menu['food_items'] %}
+            <div class="item-wrapper">
                   <div>
-                    <p>Food Item id:{{ food_item['id'] }}</p>
-                    <p>Name: {{ food_item['name'] }}</p>
-                    <p>Price: {{ food_item['price'] }}</p>
+                    <p><b>Name:</b> {{ food_item['name'] }}</p>
+                    <p><b>Category:</b> {{ food_item['category'] }}</p>
+                    <p><b>Price:</b> {{ food_item['price'] }}</p>
                   </div>
                     <div>
                         <form method="post">
@@ -55,11 +53,11 @@
                         <input type="submit" value="Add to cart">
                       </form>
                     </div>
-                {% endfor %}
             </div>
         </header>
     </article>
   {% endfor %}
+    </div>
   
 
 

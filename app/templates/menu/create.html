@@ -9,7 +9,25 @@
      <div id="items-container">
             <div class="item">
                 <label for="category">Category:</label><br>
-                <input type="text" id="category" name="category[]" required><br>
+                <select id="category" name="category[]" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="fast_food">Fast Food</option>
+                    <option value="italian">Italian</option>
+                    <option value="sushi">Sushi</option>
+                    <option value="burgers">Burgers</option>
+                    <option value="pizza">Pizza</option>
+                    <option value="seafood">Seafood</option>
+                    <option value="steak">Steak</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="dessert">Dessert</option>
+                    <option value="chinese">Chinese</option>
+                    <option value="indian">Indian</option>
+                    <option value="mexican">Mexican</option>
+                    <option value="thai">Thai</option>
+                    <option value="bbq">BBQ</option>
+                    <option value="salad">Salad</option>
+                    <option value="other">Other</option>
+                </select><br>
 
                 <label for="item_name">Item Name:</label><br>
                 <input type="text" id="item_name" name="item_name[]" required><br>

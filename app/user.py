@@ -133,8 +133,9 @@ def index():
         return render_template('auth/index_restaurant.html', orders=orders)
 
     elif g.user.user_type is UserEnum.Customer:
-        menus = Menu.query.all()
-        return render_template('auth/index.html', menus=menus)
+        food_items = FoodItem.query.all()
+        print(food_items)
+        return render_template('auth/index.html', fooditems=food_items)
 
     elif g.user.user_type is UserEnum.Delivery:
         available_orders = Order.query.filter_by(order_state=OrderState.Preparing, delivery_state=DeliveryState.Open).all()

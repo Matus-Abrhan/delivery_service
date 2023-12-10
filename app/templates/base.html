@@ -6,7 +6,7 @@
   <ul>
     {% if g.user %}
         {% if g.user.user_type.value == 'customer' %}
-            <li><a href="{{ url_for('index') }}"><span>Orders</span></a>
+            <li><a href="{{ url_for('index') }}"><span>Shop</span></a>
             <li><a href="{{ url_for('info.user_info') }}"><span>Profile</span></a>
             <li><a href="{{ url_for('cart.cart') }}"><span>Cart</span></a>
             <li><a href="{{ url_for('auth.logout') }}"><span>Log Out</span></a>

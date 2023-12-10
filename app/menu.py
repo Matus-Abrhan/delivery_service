@@ -20,6 +20,7 @@ def create_menu():
             descriptions = request.form.getlist('description[]')
             prices = request.form.getlist('price[]')
             categories = request.form.getlist('category[]')
+            print(categories)
 
             menu = Menu(restaurant_id=g.user.id)
             for i in range(len(item_names)):
