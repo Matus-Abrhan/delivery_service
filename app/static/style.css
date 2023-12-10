@@ -40,7 +40,6 @@ input {
   
   input[type=submit] {
       width: 20%;
-      align-self: center;
       min-width: 10em;
       background-color: #377ba8;
       border: none;
