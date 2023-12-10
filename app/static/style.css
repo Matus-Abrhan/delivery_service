@@ -32,7 +32,7 @@ input {
     box-sizing: border-box;
     border: 1px solid #555;
     outline: none;
-}
+  }
   
 input:focus {
 background-color: lightblue;
@@ -40,7 +40,6 @@ background-color: lightblue;
 
 input[type=submit] {
   width: 20%;
-  align-self: center;
   min-width: 10em;
   background-color: #377ba8;
   border: none;
