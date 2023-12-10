@@ -140,7 +140,6 @@ def index():
         restaurant = request.args.get('restaurant', None)
         
 
-        print(FoodItem.query.all())
         if category and restaurant:
             restaurant = BaseUser.query.filter_by(username=restaurant).first()
             menus = Menu.query.filter_by(restaurant_id=restaurant.id).all()
@@ -150,14 +149,18 @@ def index():
         elif category:
             food_items = FoodItem.query.filter_by(category=category).all()
         elif restaurant:
+            print(restaurant)
             restaurant = BaseUser.query.filter_by(username=restaurant).first()
+            print(restaurant)
             menus = Menu.query.filter_by(restaurant_id=restaurant.id).all()
+            print(menus)
             food_items = []
             for menu in menus:
-                food_items += FoodItem.query.filter_by(id=menu.id, category=category).all()
+                food_items += FoodItem.query.filter_by(menu_id=menu.id).all()
+            print(food_items)
         else:
             food_items = FoodItem.query.all()
-        return render_template('auth/index.html',categories=categories, restaurants=restaurants, menus=food_items)
+        return render_template('auth/index.html',categories=categories, restaurants=restaurants, food_items=food_items)
 
     elif g.user.user_type is UserEnum.Delivery:
         available_orders = Order.query.filter_by(order_state=OrderState.Preparing, delivery_state=DeliveryState.Open).all()
