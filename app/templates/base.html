@@ -5,13 +5,24 @@
   <h1>Food Delivery App</h1>
   <ul>
     {% if g.user %}
-        <li><a href="{{ url_for('index') }}"><span>Orders</span></a>
-        <li><a href="{{ url_for('info.user_info') }}"><span>{{ g.user['username'] }}</span></a>
-      <li><a href="{{ url_for('auth.logout') }}"><span>Log Out</span></a>
-
+        {% if g.user.user_type.value == 'customer' %}
+            <li><a href="{{ url_for('index') }}"><span>Orders</span></a>
+            <li><a href="{{ url_for('info.user_info') }}"><span>Profile</span></a>
+            <li><a href="{{ url_for('cart.cart') }}"><span>Cart</span></a>
+            <li><a href="{{ url_for('auth.logout') }}"><span>Log Out</span></a>
+        {% elif g.user.user_type.value == 'restaurant' %}
+            <li><a href="{{ url_for('index') }}"><span>Orders</span></a>
+            <li><a href="{{ url_for('info.user_info') }}"><span>Profile</span></a>
+            <li><a href="{{ url_for('menu.create_menu') }}"><span>Add item</span></a>
+            <li><a href="{{ url_for('auth.logout') }}"><span>Log Out</span></a>
+        {% elif g.user.user_type.value == 'delivery' %}
+            <li><a href="{{ url_for('index') }}"><span>Orders</span></a>
+            <li><a href="{{ url_for('info.user_info') }}"><span>Profile</span></a>
+            <li><a href="{{ url_for('auth.logout') }}"><span>Log Out</span></a>
+        {% endif %}
     {% else %}
-      <li><a href="{{ url_for('auth.register') }}">Register</a>
-      <li><a href="{{ url_for('auth.login') }}">Log In</a>
+        <li><a href="{{ url_for('auth.register') }}">Register</a>
+        <li><a href="{{ url_for('auth.login') }}">Log In</a>
     {% endif %}
   </ul>
 </nav>
