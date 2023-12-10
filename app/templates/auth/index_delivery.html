@@ -1,22 +1,39 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Index{% endblock %}</h1>
+  <h1>{% block title %}Home{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
   <h2>Taken Orders</h2>
   {% for order in taken_orders %}
-      <button id="updateLocation" onclick="updateLocation()">Update location</button>
-    <article>
-        <header>
-            <div>
-                <h1>Order id: {{ order['id'] }}</h1>
-                <p>State: {{ order['order_state']}}</p>
-                <p>Food items: {{ order['food_items'] }}</p> 
-            </div>
-        </header>
-    </article>
+       {% if order['order_state'].value != 'delivered' %}
+            <article>
+                <header>
+                    <div>
+                        <h1>Order id: {{ order['id'] }}</h1>
+                        <p>State: {{ order['order_state'].value}}</p>
+                        <p>Food items: {{ order['food_items'] }}</p>
+                    </div>
+                    <div>
+                        {% if order['order_state'].value == 'delivering'  %}
+                          <form method="post">
+                                <input name="order_id_delivered" id="order_id_delivered" style="display: none" value="{{ order['id'] }}">
+                                <input type="submit" value="Delivered order">
+                          </form>
+                        {% endif %}
+                        {% if order['order_state'].value == 'ready'  %}
+                          <form method="post">
+                            <input name="order_id_pickup" id="order_id_pickup" style="display: none" value="{{ order['id'] }}">
+                              <input name="longitude" style="display: none" id="longitude">
+                              <input name="latitude" style="display: none" id="latitude">
+                            <input type="submit" value="Pickup order">
+                          </form>
+                        {% endif %}
+                    </div>
+                </header>
+            </article>
+      {% endif %}
   {% endfor %}
   
   <h2> Available Orders</h2>
@@ -25,47 +42,36 @@
         <header>
             <div>
                 <h1>Order id: {{ order['id'] }}</h1>
-                <p>State: {{ order['order_state']}}</p>
+                <p>State: {{ order['order_state'].value}}</p>
                 <p>Food items: {{ order['food_items'] }}</p> 
+            </div>
+
+            <div>
+                 {% if order['order_state'].value == 'preparing' %}
+                    <form method="post">
+                        <input name="order_id_take" id="order_id_take" style="display: none" value="{{ order['id'] }}">
+                        <input type="submit" value="Take order">
+                      </form>
+                {% endif %}
             </div>
         </header>
     </article>
   {% endfor %}
   
-  <form method="post">
-    <label for="value">Order id</label>
-    <input name="order_id_take" id="order_id_take">
-    <input type="submit" value="Take order">
-  </form>
 
-  <form method="post">
-    <label for="value">Order id</label>
-    <input name="order_id_pickup" id="order_id_pickup">
-      <input name="longitude" id="longitude">
-      <input name="latitude" id="latitude">
-    <input type="submit" value="Pickup order">
-  </form>
-
-  <form method="post">
-    <label for="value">Order id</label>
-    <input name="order_id_delivered" id="order_id_delivered">
-    <input type="submit" value="Delivered order">
-  </form>
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
 
     const lat = document.getElementById("latitude");
     const long = document.getElementById("longitude");
-    lat.hidden=true;
-    long.hidden=true;
 
 
     function updateLocation(){
         if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(sendNewLocation);
           } else {
-              lat.value = "48.148598"
-              long.value = "17.107748"
+              document.getElementById("latitude").value = "48.148598"
+              document.getElementById("longitude").value = "17.107748"
           }
     }
     let add = 0.01
@@ -85,19 +91,18 @@
             });
     }
     const interval = setInterval(updateLocation, 5000)
-    getLocation()
     function getLocation() {
           if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(showPosition);
           } else {
-              lat.value = "48.148598"
-              long.value = "17.107748"
+              document.getElementById("latitude").value = "48.148598"
+              document.getElementById("longitude").value = "17.107748"
           }
         }
 
         function showPosition(position) {
-            lat.value = position.coords.latitude
-            long.value = position.coords.longitude
+            document.getElementById("latitude").value = position.coords.latitude
+            document.getElementById("longitude").value = position.coords.longitude
         }
 	</script>
 {% endblock %}

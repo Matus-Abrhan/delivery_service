@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Index{% endblock %}</h1>
+  <h1>{% block title %}Home{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -43,22 +43,24 @@
                     <p>Name: {{ food_item['name'] }}</p>
                     <p>Price: {{ food_item['price'] }}</p>
                   </div>
+                    <div>
+                        <form method="post">
+                        <div>
+                            <input name="food_item_id" id="food_item_id"  style="display: none" value="{{ food_item['id'] }}" required>
+                        </div>
+                        <div>
+                            <label for="quantity">Number of Items:</label>
+                            <input type="number" name="quantity" id="quantity" min="1" value="1" style="width: 5em;" required>
+                        </div>
+                        <input type="submit" value="Add to cart">
+                      </form>
+                    </div>
                 {% endfor %}
             </div>
         </header>
     </article>
   {% endfor %}
   
-  <form method="post">
-    <div>
-        <label for="value">Food Item ID</label>
-        <input name="food_item_id" id="food_item_id" style="width: 10em;" required>
-    </div>
-    <div>
-        <label for="quantity">Number of Items:</label>
-        <input type="number" name="quantity" id="quantity" min="1" value="1" style="width: 5em;" required>
-    </div>
-    <input type="submit" value="Add to cart">
-  </form>
+
 
 {% endblock %}

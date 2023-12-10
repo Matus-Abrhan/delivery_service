@@ -8,7 +8,6 @@ class OrderState(enum.Enum):
     Ready = "ready"
     Delivering = "delivering"
     Delivered = "delivered"
-    Completed = "completed"
 
 class DeliveryState(enum.Enum):
     Open = "open"
